@@ -36,6 +36,22 @@ for item in all:
     except Exception:
         half_baths = None
 
+    try:
+        features = item.find('div', {'class': 'propertyFeatures'}).findAll('div', {'class': 'columnGroup'})
+
+        lot_size = None
+
+        for item in features:
+            childs = item.findChildren()
+
+            if len(childs) == 0: continue
+
+            if 'Lot Size' in childs[0].text:
+                lot_size = childs[1].text.strip()
+
+    except Exception as e:
+        lot_size = None
+
     print(price)
     print(address1)
     print(address2)
@@ -43,4 +59,5 @@ for item in all:
     print(sq_ft)
     print(full_baths)
     print(half_baths)
+    print(lot_size)
     print()
