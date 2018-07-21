@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import pandas
 
 url = 'https://www.pythonhow.com/real-estate/rock-springs-wy/LCWYROCKSPRINGS/';
 
@@ -10,11 +11,13 @@ data = BeautifulSoup(content, 'html.parser')
 
 all = data.find_all('div', {'class': 'propertyRow'})
 
+objects = []
+
 for item in all:
     price = item.find('h4').text.strip()
     address_data = item.findAll('span', {'class': 'propAddressCollapse'})
-    address1 = address_data[0].text.strip()
-    address2 = address_data[1].text.strip()
+    address = address_data[0].text.strip()
+    location = address_data[1].text.strip()
 
     try:
         beds = item.find('span', {'class': 'infoBed'}).find('b').text.strip()
@@ -52,12 +55,16 @@ for item in all:
     except Exception as e:
         lot_size = None
 
-    print(price)
-    print(address1)
-    print(address2)
-    print(beds)
-    print(sq_ft)
-    print(full_baths)
-    print(half_baths)
-    print(lot_size)
-    print()
+    objects.append({
+        'Price': price,
+        'Address': address,
+        'Location': location,
+        'Beds': beds,
+        'Sq. Ft': sq_ft,
+        'Full Baths': full_baths,
+        'Half Baths': half_baths,
+        'Lot Size': lot_size
+    })
+
+df = pandas.DataFrame(objects)
+df.to_csv('objects.csv')
